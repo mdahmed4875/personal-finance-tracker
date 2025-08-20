@@ -1,0 +1,94 @@
+.transactions-table {
+  width: 95%;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+}
+
+.transactions-table h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  letter-spacing: 0.5px;
+}
+
+.sort-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  gap: 10px;
+}
+
+.sort-buttons button {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.sort-buttons button:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.transactions-table table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.transactions-table th, 
+.transactions-table td {
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.transactions-table th {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transactions-table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.transactions-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.transactions-table tbody tr:hover {
+  background-color: #e0e7ff;
+  transform: scale(1.01);
+}
+
+.transactions-table td {
+  color: #555;
+}
+
+.transactions-table td:first-child {
+  font-weight: 600;
+}
+
+/* Color amounts differently */
+.transactions-table td.amount-income {
+  color: #16a34a; /* green for income */
+}
+
+.transactions-table td.amount-expense {
+  color: #dc2626; /* red for expense */
+}
