@@ -40,12 +40,35 @@ function Dashboard() {
     const unsubscribe = onSnapshot(userRef, (doc) => {
       if (doc.exists()) setUserData(doc.data());
     });
+    
     return () => unsubscribe();
   }, [user, firestoreDB]);
 
-  const totalIncome = userData?.incomes?.reduce((sum, i) => sum + (i.amount || 0), 0) || 0;
-  const totalExpense = userData?.expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+  const totalIncome = userData?.incomes?.reduce((sum, i) => sum + Number(i.amount || 0), 0) || 0;
+  const totalExpense = userData?.expenses?.reduce((sum, e) => sum + Number(e.amount || 0), 0) || 0;
   const totalBalance = totalIncome - totalExpense;
+  useEffect(()=>{
+    if(!user||!firestoreDB||!userData)return;
+    const newTotals = {
+      totalIncome,
+      totalExpense,
+      totalBalance,
+    };
+    const storedIncome = userData.totalIncome ?? null;
+    const storedExpense = userData.totalExpense ?? null;
+    const storedBalance = userData.totalBalance ?? null;
+     if (
+      storedIncome !== newTotals.totalIncome ||
+      storedExpense !== newTotals.totalExpense ||
+      storedBalance !== newTotals.totalBalance
+    ) {
+      const userRef = doc(firestoreDB, "users", user.uid);
+      updateDoc(userRef, newTotals).catch((err) => {
+        console.error("Failed to sync totals to Firestore:", err);
+      });
+    }
+  },
+  [totalIncome,totalExpense,totalBalance,user,firestoreDB,userData]);
 
   return (
     <div className="dashboard">

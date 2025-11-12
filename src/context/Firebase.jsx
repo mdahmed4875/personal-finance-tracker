@@ -138,17 +138,7 @@ export const FirebaseProvider = (props) => {
     }
   };
 
-  //  Login with Google
-  const loginWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(firebaseAuth, googleProvider);
-      await saveUserToDB(result.user);
-      return { user: result.user, error: null };
-    } catch (error) {
-      console.error("Google login error:", error.message);
-      return { user: null, error: error.message };
-    }
-  };
+  
 
   //  Logout
   const logout = async () => {
@@ -161,19 +151,101 @@ export const FirebaseProvider = (props) => {
       return { success: false, error: error.message };
     }
   };
+  const removeIncome=async(incomeId)=>{
+    try{
+      const userRef=doc(firestoreDB,"users",user.uid);
+      const docSnap=await getDoc(userRef);
+      if(docSnap.exists()){
+        const userData=docSnap.data();
+        const updatedIncomes=userData.incomes.filter(i=>i.id!==incomeId);
+        await updateDoc(userRef,{
+          incomes:updatedIncomes
+        });
+        console.log("Income removed successfully");
+      }
+    }catch(error){
+      console.error("Error removing income:",error);
+    }
+
+  }
+  const removeExpence=async(expenseId)=>{
+    try{
+      const userRef=doc(firestoreDB,"users",user.uid);
+      const docSnap=await getDoc(userRef);
+      if(docSnap.exists()){
+        const userData=docSnap.data();
+        const updatedExpenses=userData.expenses.filter(e=>e.id!==expenseId);
+        await updateDoc(userRef,{
+          expenses:updatedExpenses
+        });
+        console.log("Expense removed successfully");
+      }
+
+    }catch(error){
+      console.log("Error removing expense:",error);
+    }
+
+  }
+  const editIncome=async(incomeId,newData)=>{
+    try{
+      const userRef=doc(firestoreDB,"users",user.uid);
+      const docSnap=await getDoc(userRef);
+      if(docSnap.exists()){
+        const userData=docSnap.data();
+        const updatedIncomes=userData.incomes.map(i=>{
+          if(i.id===incomeId){
+            return { ...i, ...newData };
+          }
+          return i;
+        });
+        await updateDoc(userRef,{
+          incomes:updatedIncomes
+        });
+        console.log("Income edited successfully");
+      }
+    }catch(error){
+      console.error("Error editing income:",error);
+    }
+  }
+  const editExpense=async(expenseId,newData)=>{
+    try{
+      const userRef=doc(firestoreDB,"users",user.uid);
+      const docSnap=await getDoc(userRef);
+      if(docSnap.exists()){
+        const userData=docSnap.data();
+        const updatedExpenses=userData.expenses.map(e=>{
+          if(e.id===expenseId){
+            return { ...e, ...newData };
+          }
+          return e;
+        }
+        );
+        await updateDoc(userRef,{
+          expenses:updatedExpenses
+        });
+        console.log("Expense edited successfully");
+      }
+    }catch(error){
+      console.error("Error editing expense:",error);
+    }
+  }
 
   return (
     <FirebaseContext.Provider
       value={{
+        editExpense,
+        editIncome,
+        removeIncome,
+        removeExpence,
         user,
         signup,
         login,
-        loginWithGoogle,
         logout,
         addIncome,
         addExpense,
         firebaseAuth,
         firestoreDB,
+
       }}
     >
       {props.children}

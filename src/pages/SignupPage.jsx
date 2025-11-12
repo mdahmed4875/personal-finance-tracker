@@ -31,17 +31,7 @@ function SignupPage() {
     }
   };
 
-  const handleGoogleSignup = () => {
-    firebase
-      .loginWithGoogle()
-      .then(() => {
-        toast.success("Signed up with Google successfully!");
-        navigate("/dashboard");
-      })
-      .catch((err) => {
-        toast.error("Google signup failed: " + err.message);
-      });
-  };
+  
 
   return (
     <div className="signup-page">
@@ -72,10 +62,6 @@ function SignupPage() {
         <p>
           Already have an account? <a href="/login">Login</a>
         </p>
-        <p>Or sign up with:</p>
-        <button type="button" className="google-button" onClick={handleGoogleSignup}>
-          Google
-        </button>
       </form>
     </div>
   );

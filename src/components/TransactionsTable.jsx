@@ -1,8 +1,14 @@
 import React, { useState, useMemo } from "react";
 import "./TransactionsTable.css"; 
+import { useFirebase } from "../context/Firebase";
+import EditIncome from "./EditIncome";
+import EditExpence from "./EditExpence";
 
 const TransactionsTable = ({ incomes = [], expenses = [] }) => {
   const [sortConfig, setSortConfig] = useState({ key: "date", direction: "desc" });
+  const [showIncome,setShowIncome]=useState(false);
+  const [showExpense,setShowExpense]=useState(false);
+  const [transactionToEdit,setTransactionToEdit]=useState(null);
 
   // Merge incomes and expenses into one array
   const transactions = useMemo(() => {
@@ -36,6 +42,37 @@ const TransactionsTable = ({ incomes = [], expenses = [] }) => {
       direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc"
     }));
   };
+  const firebase=useFirebase();
+  const handleDelete=async(txId,txType)=>{
+    if(txType==="Income"){
+      try{
+        await firebase.removeIncome(txId);
+      }catch(error){
+        console.error("Error removing income:",error);
+      }
+  }
+  else{
+    try{
+      await firebase.removeExpence(txId);
+    }catch(error){
+      console.error("Error removing expense:",error);
+
+  }
+}
+  }
+const handleEdit=async(tx,txType)=>{
+
+    try{
+      setTransactionToEdit(tx);
+      if(txType==="Income"){
+        setShowIncome(true);
+      }else{
+        setShowExpense(true);
+      }
+    }
+    catch(error){
+    }
+  }
 
   return (
     <div className="transactions-table">
@@ -66,10 +103,24 @@ const TransactionsTable = ({ incomes = [], expenses = [] }) => {
               <td>{tx.amount}</td>
               <td>{new Date(tx.date).toLocaleDateString()}</td>
               <td>{tx.type === "Income" ? tx.category : tx.paymentMethod || tx.description}</td>
+              <td>
+                <button className="delete-button"
+              onClick={()=>handleDelete(tx.id,tx.type)}
+              >
+                Delete
+              </button>
+              <button className="edit-button"
+              onClick={()=>handleEdit(tx,tx.type)}
+              >Edit</button>
+
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+          <EditIncome transaction={transactionToEdit} isopen={showIncome} onclose={()=>setShowIncome(false)}/>
+
+          <EditExpence transaction={transactionToEdit} isopen={showExpense} onclose={()=>setShowExpense(false)}/>
     </div>
   );
 };
